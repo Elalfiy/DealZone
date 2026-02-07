@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { FileText, CheckCircle, XCircle, Clock, Eye, AlertCircle, Inbox } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
+import MobileDrawer from '../components/MobileDrawer'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
@@ -42,6 +43,7 @@ const ReceivedOffers = () => {
     <div className="min-h-screen bg-secondary/30">
       <Navbar />
       <Sidebar userType={user?.type} />
+      <MobileDrawer userType={user?.type} />
       <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} mt-20 p-4 md:p-8`}> 
         <div className="max-w-7xl mx-auto">
           <PageTitle title={t('offers.received')} />

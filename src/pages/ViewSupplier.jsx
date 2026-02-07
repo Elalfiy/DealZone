@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
+import MobileDrawer from '../components/MobileDrawer'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import { useApp } from '../context/AppContext'
@@ -29,6 +30,12 @@ const ViewSupplier = () => {
   const [supplier, setSupplier] = useState(null)
   const [supplierProducts, setSupplierProducts] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const getText = (value) => {
+    if (!value && value !== 0) return ''
+    if (typeof value === 'object') return value?.[language] || value?.en || value?.ar || ''
+    return String(value)
+  }
 
   useEffect(() => {
     if (supplierId) {
@@ -49,6 +56,7 @@ const ViewSupplier = () => {
       <div className="min-h-screen bg-secondary/30">
         <Navbar />
         <Sidebar userType={user?.type} />
+        <MobileDrawer userType={user?.type} />
         <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} pt-20 p-4 md:p-8`}>
           <div className="max-w-7xl mx-auto">
             <div className="text-center py-12">
@@ -65,6 +73,7 @@ const ViewSupplier = () => {
       <div className="min-h-screen bg-secondary/30">
         <Navbar />
         <Sidebar userType={user?.type} />
+        <MobileDrawer userType={user?.type} />
         <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} pt-20 p-4 md:p-8`}>
           <div className="max-w-7xl mx-auto">
             <Card>
@@ -85,6 +94,7 @@ const ViewSupplier = () => {
     <div className="min-h-screen bg-secondary/30">
       <Navbar />
       <Sidebar userType={user?.type} />
+      <MobileDrawer userType={user?.type} />
       <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} pt-20 p-4 md:p-8`}>
         <div className="max-w-7xl mx-auto">
           {/* Back Button */}
@@ -116,7 +126,7 @@ const ViewSupplier = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h1 className="text-3xl font-cairo font-bold text-text-dark mb-2">
-                        {supplier.name}
+                        {getText(supplier.name)}
                       </h1>
                       {supplier.verified && (
                         <div className="flex items-center gap-2 text-primary">
@@ -135,7 +145,7 @@ const ViewSupplier = () => {
 
                   <div className="flex items-center gap-2 text-text-gray mb-4">
                     <MapPin className="w-4 h-4" />
-                    <span>{supplier.location}</span>
+                    <span>{getText(supplier.location)}</span>
                   </div>
 
                   {/* Stats Grid */}
@@ -218,7 +228,7 @@ const ViewSupplier = () => {
                         {product.image ? (
                           <img 
                             src={product.image} 
-                            alt={product.name}
+                            alt={getText(product.name)}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -228,10 +238,10 @@ const ViewSupplier = () => {
                         )}
                       </div>
                       <h3 className="text-xl font-cairo font-bold text-text-dark mb-2">
-                        {product.name}
+                        {getText(product.name)}
                       </h3>
                       <p className="text-text-gray text-sm mb-4 line-clamp-2">
-                        {product.description}
+                        {getText(product.description)}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold text-primary">

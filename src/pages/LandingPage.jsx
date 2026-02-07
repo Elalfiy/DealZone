@@ -167,7 +167,7 @@ const LandingPage = () => {
           >
             <div className="relative overflow-hidden rounded-3xl border border-primary/20 shadow-soft">
               <img
-                src="https://picsum.photos/seed/factory/1200/800"
+                src="/b2b.png"
                 alt="Industrial manufacturing"
                 className="w-full h-72 md:h-96 object-cover"
                 loading="lazy"

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FileText, Send } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
+import MobileDrawer from '../components/MobileDrawer'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import { useApp } from '../context/AppContext'
@@ -24,6 +25,7 @@ const IncomingRFQs = () => {
     <div className="min-h-screen bg-secondary/30">
       <Navbar />
       <Sidebar userType={user?.type} />
+      <MobileDrawer userType={user?.type} />
       <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} pt-20 p-8`}>
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-cairo font-bold text-text-dark mb-8">

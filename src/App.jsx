@@ -43,13 +43,15 @@ import ScrollToTop from './components/ScrollToTop'
 const ProtectedRoute = ({ children, requiredType = null, requireAdmin = false }) => {
   const { user } = useApp()
   
-  
-  
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
   // Admin check
   if (requireAdmin && user.type !== 'admin') {
     return <Navigate to="/" replace />
   }
-  
+
   // Type check
   if (requiredType && user.type !== requiredType) {
     return <Navigate to={user.type === 'manufacturer' ? '/dashboard/manufacturer' : '/dashboard/supplier'} replace />

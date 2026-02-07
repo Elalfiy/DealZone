@@ -295,6 +295,7 @@ const SupplierDashboard = () => {
     <div className="min-h-screen bg-secondary/30">
       <Navbar isAuthenticated={true} userType="supplier" />
       <Sidebar userType="supplier" />
+      <MobileDrawer userType="supplier" />
       <div className={`ml-0 ${language === 'ar' ? 'md:mr-64' : 'md:ml-64'} mt-20 p-4 md:p-8`}>        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div

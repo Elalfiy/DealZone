@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import { ShoppingBag } from 'lucide-react'
+import { useTranslation } from '../../hooks/useTranslation'
 
 const LogoPlaceholder = ({ size = 'default', showText = true, className = '' }) => {
+  const { t } = useTranslation()
+
   const sizes = {
     small: 'w-8 h-8',
     default: 'w-12 h-12',

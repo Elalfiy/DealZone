@@ -12,7 +12,6 @@ import {
   X
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
-import LogoPlaceholder from './ui/LogoPlaceholder'
 import { useTranslation } from '../hooks/useTranslation'
 
 const MobileDrawer = ({ userType = 'manufacturer' }) => {
@@ -64,8 +63,8 @@ const MobileDrawer = ({ userType = 'manufacturer' }) => {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-4 z-50 p-2 bg-white rounded-lg shadow-md"
-        style={{ [language === 'ar' ? 'right' : 'left']: '1rem' }}
+        className="md:hidden fixed top-24 z-40 p-2 bg-white rounded-lg shadow-md"
+        style={{ [language === 'ar' ? 'left' : 'right']: '1rem' }}
         aria-label={t('aria.openMenu')}
       >
         <Menu className="w-6 h-6 text-text-dark" />
@@ -93,7 +92,20 @@ const MobileDrawer = ({ userType = 'manufacturer' }) => {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-secondary">
-                <LogoPlaceholder size="small" showText={true} />
+                <Link
+                  to="/"
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-2 ${language === 'ar' ? 'flex-row-reverse' : ''}`}
+                  aria-label={t('aria.home')}
+                >
+                  <img
+                    src="/DealZone%20Logo.jpeg"
+                    alt={t('aria.home')}
+                    className="w-10 h-10 object-contain flex-shrink-0"
+                    loading="eager"
+                  />
+                  <span className="text-lg font-cairo font-bold text-text-dark whitespace-nowrap">DealZone</span>
+                </Link>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-secondary rounded-lg transition-colors"

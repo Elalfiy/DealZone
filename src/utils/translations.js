@@ -526,9 +526,33 @@ export const translations = {
     'product.reviews': 'Reviews & Ratings',
     'product.supplierInfo': 'Supplier Information',
     'product.viewSupplierProfile': 'View Supplier Profile',
+    'product.verifiedSupplier': 'Verified Supplier',
+    'product.rating': 'Rating',
+    'product.totalDeals': 'Total Deals',
+    'product.onTimeDelivery': 'On-Time Delivery',
+    'product.responseTime': 'Response Time',
     'product.backToMarketplace': 'Back to Marketplace',
     'product.verified': 'Verified',
     'product.reviewsCount': 'reviews',
+
+    'product.freeShipping': 'Free shipping on orders above {amount}',
+    'product.escrowProtection': 'Includes escrow protection',
+
+    'product.validQuantityRequired': 'Valid quantity is required',
+    'product.validPriceRequired': 'Valid price is required',
+    'product.deliveryDateRequired': 'Delivery date is required',
+
+    'product.quantity': 'Quantity',
+    'product.enterQuantity': 'Enter quantity',
+    'product.pricePerUnit': 'Price per unit',
+    'product.enterPrice': 'Enter price',
+    'product.deliveryDate': 'Delivery date',
+    'product.notesOptional': 'Notes (optional)',
+    'product.addNotes': 'Add any additional notes...',
+    'product.sending': 'Sending...',
+    'product.offerSentSuccess': 'Offer sent successfully!',
+    'product.offerSentFailed': 'Failed to send offer. Please try again.',
+    'product.loginToInteract': 'Login to interact',
     
     // Payments
     'payments.title': 'Payments',
