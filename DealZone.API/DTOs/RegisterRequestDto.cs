@@ -49,5 +49,8 @@ namespace DealZone.API.DTOs
         public string? ContactPerson { get; set; }
 
         public IFormFile? BusinessLicense { get; set; }
+
+        /// <summary>Alias used by registrationService.js (kycDocument field name).</summary>
+        public IFormFile? KycDocument { get; set; }
     }
 }

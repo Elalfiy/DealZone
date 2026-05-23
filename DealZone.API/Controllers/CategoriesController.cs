@@ -19,7 +19,7 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> GetCategories()
         {
             var categories = await _productService.GetCategoriesAsync();
-            return Ok(new ApiResponse<IEnumerable<object>> { Data = categories });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<object>> { Data = categories });
         }
     }
 }

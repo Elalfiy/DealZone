@@ -24,7 +24,7 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var shipment = await _shipmentService.GetShipmentAsync(orderId, userId, role);
-            return Ok(new ApiResponse<ShipmentDto> { Data = shipment });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ShipmentDto> { Data = shipment });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -33,7 +33,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             var shipment = await _shipmentService.UpdateShipmentAsync(orderId, userId, request);
-            return Ok(new ApiResponse<ShipmentDto> { Data = shipment });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ShipmentDto> { Data = shipment });
         }
     }
 }

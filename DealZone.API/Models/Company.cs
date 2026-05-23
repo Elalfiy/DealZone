@@ -29,6 +29,7 @@ namespace DealZone.API.Models
         public string KycStatus { get; set; } = "Pending";
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public virtual User User { get; set; } = null!;
 

@@ -16,6 +16,7 @@ import DealTracking from './pages/DealTracking'
 import ShippingTracking from './pages/ShippingTracking'
 import RatingReview from './pages/RatingReview'
 import ReDealZone from './pages/ReDealZone'
+import TestData from './pages/TestData'
 import EmailVerification from './pages/EmailVerification'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -94,7 +95,7 @@ function AppRoutes() {
         <Route path="/shipping/:trackingId" element={<ProtectedRoute><ShippingTracking /></ProtectedRoute>} />
         <Route path="/rating/:dealId" element={<ProtectedRoute><RatingReview /></ProtectedRoute>} />
         <Route path="/redeal" element={<ReDealZone />} />
-        
+        <Route path="/test-data" element={<TestData />} />
         <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />

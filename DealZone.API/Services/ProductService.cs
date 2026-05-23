@@ -32,7 +32,11 @@ namespace DealZone.API.Services
 
         public async Task<PaginatedResult<ProductDto>> GetProductsAsync(int? categoryId, string? search, decimal? minPrice, decimal? maxPrice, int page, int pageSize)
         {
-            var query = _context.Products.Include(p => p.Category).AsQueryable();
+            var query = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .ThenInclude(s => s.Company)
+                .AsQueryable();
 
             if (categoryId.HasValue)
                 query = query.Where(p => p.CategoryId == categoryId.Value);
@@ -70,7 +74,11 @@ namespace DealZone.API.Services
                         Name = p.Category.Name,
                         NameAr = p.Category.NameAr,
                         Icon = p.Category.Icon
-                    }
+                    },
+                    SupplierName = p.Supplier.Company != null ? p.Supplier.Company.Name : p.Supplier.Email,
+                    SupplierEmail = p.Supplier.Email,
+                    SupplierLocation = p.Supplier.Company != null ? p.Supplier.Company.Address : null,
+                    SupplierVerified = p.Supplier.IsVerified
                 })
                 .ToListAsync();
 
@@ -85,7 +93,11 @@ namespace DealZone.API.Services
 
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .ThenInclude(s => s.Company)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
                 throw new ApplicationException("Product not found.");
 
@@ -108,7 +120,11 @@ namespace DealZone.API.Services
                     Name = product.Category.Name,
                     NameAr = product.Category.NameAr,
                     Icon = product.Category.Icon
-                }
+                },
+                SupplierName = product.Supplier.Company?.Name ?? product.Supplier.Email,
+                SupplierEmail = product.Supplier.Email,
+                SupplierLocation = product.Supplier.Company?.Address,
+                SupplierVerified = product.Supplier.IsVerified
             };
         }
 

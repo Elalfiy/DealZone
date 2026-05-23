@@ -24,7 +24,7 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var result = await _orderService.GetOrdersAsync(status, page, pageSize, userId, role);
-            return Ok(new ApiResponse<PaginatedResult<OrderDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<PaginatedResult<OrderDto>> { Data = result });
         }
 
         [Authorize]
@@ -34,15 +34,15 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var order = await _orderService.GetOrderByIdAsync(id, userId, role);
-            return Ok(new ApiResponse<OrderDto> { Data = order });
+            return Ok(new DealZone.API.Helpers.ApiResponse<OrderDto> { Data = order });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto request)
         {
             var order = await _orderService.CreateOrderAsync(request);
-            return Ok(new ApiResponse<OrderDto> { Data = order });
+            return Ok(new DealZone.API.Helpers.ApiResponse<OrderDto> { Data = order });
         }
 
         [Authorize]
@@ -52,7 +52,7 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var order = await _orderService.UpdateOrderStatusAsync(id, request, userId, role);
-            return Ok(new ApiResponse<OrderDto> { Data = order });
+            return Ok(new DealZone.API.Helpers.ApiResponse<OrderDto> { Data = order });
         }
     }
 }
