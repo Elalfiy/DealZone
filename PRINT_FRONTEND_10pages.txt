@@ -1,0 +1,500 @@
+﻿============================================================
+FILE: src\App.jsx
+============================================================
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { AppProvider } from './context/AppContext'
+import { LanguageProvider } from './context/LanguageContext'
+import Toast from './components/Toast'
+import LandingPage from './pages/LandingPage'
+import SignUp from './pages/SignUp'
+import Login from './pages/Login'
+import Verification from './pages/Verification'
+import ManufacturerDashboard from './pages/ManufacturerDashboard'
+import SupplierDashboard from './pages/SupplierDashboard'
+import Marketplace from './pages/Marketplace'
+import ProductDetails from './pages/ProductDetails'
+import RequestDetails from './pages/RequestDetails'
+import EscrowPayment from './pages/EscrowPayment'
+import DealTracking from './pages/DealTracking'
+import ShippingTracking from './pages/ShippingTracking'
+import RatingReview from './pages/RatingReview'
+import ReDealZone from './pages/ReDealZone'
+import TestData from './pages/TestData'
+import EmailVerification from './pages/EmailVerification'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import ProfileSettings from './pages/ProfileSettings'
+import AdminPanel from './pages/AdminPanel'
+import CreateRFQ from './pages/CreateRFQ'
+import TendersListPage from './pages/TendersListPage'
+import CreateTenderPage from './pages/CreateTenderPage'
+import TenderDetailsPage from './pages/TenderDetailsPage'
+import AboutPage from './pages/AboutPage'
+import MyRFQs from './pages/MyRFQs'
+import ReceivedOffers from './pages/ReceivedOffers'
+import MyOffers from './pages/MyOffers'
+import Payments from './pages/Payments'
+import Shipments from './pages/Shipments'
+import Reviews from './pages/Reviews'
+import IncomingRFQs from './pages/IncomingRFQs'
+import MyProducts from './pages/MyProducts'
+import ViewSupplier from './pages/ViewSupplier'
+import { useApp } from './context/AppContext'
+import ScrollToTop from './components/ScrollToTop'
+
+// Protected Route Component
+const ProtectedRoute = ({ children, requiredType = null, requireAdmin = false }) => {
+  const { user } = useApp()
+  
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  // Admin check
+  if (requireAdmin && user.type !== 'admin') {
+    return <Navigate to="/" replace />
+  }
+
+  // Type check
+  if (requiredType && user.type !== requiredType) {
+    return <Navigate to={user.type === 'manufacturer' ? '/dashboard/manufacturer' : '/dashboard/supplier'} replace />
+  }
+  
+  return children
+}
+
+function AppRoutes() {
+  const { notifications, removeNotification } = useApp()
+  
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verification" element={<Verification />} />
+        <Route 
+          path="/dashboard/manufacturer" 
+          element={
+            <ProtectedRoute requiredType="manufacturer">
+              <ManufacturerDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/supplier" 
+          element={
+            <ProtectedRoute requiredType="supplier">
+              <SupplierDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/request/:id" element={<RequestDetails />} />
+        <Route path="/escrow/:dealId" element={<ProtectedRoute><EscrowPayment /></ProtectedRoute>} />
+        <Route path="/deal/:dealId" element={<ProtectedRoute><DealTracking /></ProtectedRoute>} />
+        <Route path="/shipping/:trackingId" element={<ProtectedRoute><ShippingTracking /></ProtectedRoute>} />
+        <Route path="/rating/:dealId" element={<ProtectedRoute><RatingReview /></ProtectedRoute>} />
+        <Route path="/redeal" element={<ReDealZone />} />
+        <Route path="/test-data" element={<TestData />} />
+        <Route path="/email-verification" element={<EmailVerification />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+        <Route path="/create-rfq" element={<ProtectedRoute requiredType="manufacturer"><CreateRFQ /></ProtectedRoute>} />
+        <Route path="/tenders" element={<ProtectedRoute><TendersListPage /></ProtectedRoute>} />
+        <Route path="/tenders/create" element={<ProtectedRoute requiredType="manufacturer"><CreateTenderPage /></ProtectedRoute>} />
+        <Route path="/tenders/:tenderId" element={<ProtectedRoute><TenderDetailsPage /></ProtectedRoute>} />
+        <Route path="/dashboard/manufacturer/rfqs" element={<ProtectedRoute requiredType="manufacturer"><MyRFQs /></ProtectedRoute>} />
+        <Route path="/dashboard/manufacturer/offers" element={<ProtectedRoute requiredType="manufacturer"><ReceivedOffers /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/offers" element={<ProtectedRoute requiredType="supplier"><MyOffers /></ProtectedRoute>} />
+        <Route path="/dashboard/manufacturer/payments" element={<ProtectedRoute requiredType="manufacturer"><Payments /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/payments" element={<ProtectedRoute requiredType="supplier"><Payments /></ProtectedRoute>} />
+        <Route path="/dashboard/manufacturer/shipments" element={<ProtectedRoute requiredType="manufacturer"><Shipments /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/shipments" element={<ProtectedRoute requiredType="supplier"><Shipments /></ProtectedRoute>} />
+        <Route path="/dashboard/manufacturer/reviews" element={<ProtectedRoute requiredType="manufacturer"><Reviews /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/reviews" element={<ProtectedRoute requiredType="supplier"><Reviews /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/rfqs" element={<ProtectedRoute requiredType="supplier"><IncomingRFQs /></ProtectedRoute>} />
+        <Route path="/dashboard/supplier/products" element={<ProtectedRoute requiredType="supplier"><MyProducts /></ProtectedRoute>} />
+        <Route path="/my-products" element={<ProtectedRoute requiredType="supplier"><MyProducts /></ProtectedRoute>} />
+        <Route path="/my-offers" element={<ProtectedRoute requiredType="supplier"><MyOffers /></ProtectedRoute>} />
+        <Route path="/received-offers" element={<ProtectedRoute requiredType="manufacturer"><ReceivedOffers /></ProtectedRoute>} />
+        <Route path="/my-rfqs" element={<ProtectedRoute requiredType="manufacturer"><MyRFQs /></ProtectedRoute>} />
+        <Route path="/incoming-rfqs" element={<ProtectedRoute requiredType="supplier"><IncomingRFQs /></ProtectedRoute>} />
+        <Route path="/reviews" element={<ProtectedRoute><Reviews /></ProtectedRoute>} />
+        <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
+        <Route path="/shipments" element={<ProtectedRoute><Shipments /></ProtectedRoute>} />
+        <Route path="/deal-tracking" element={<ProtectedRoute><DealTracking /></ProtectedRoute>} />
+        <Route path="/supplier/:supplierId" element={<ViewSupplier />} />
+      </Routes>
+      <Toast toasts={notifications} removeToast={removeNotification} />
+    </>
+  )
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppProvider>
+        <Router>
+          <ScrollToTop />
+          <AppRoutes />
+        </Router>
+      </AppProvider>
+    </LanguageProvider>
+  )
+}
+
+export default App
+
+============================================================
+FILE: src\pages\AboutPage.jsx
+============================================================
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import {
+  ShieldCheck,
+  Building2,
+  Factory,
+  FileText,
+  Gavel,
+  Shield,
+  Truck,
+  Search,
+  CheckCircle2,
+  ArrowRight,
+} from 'lucide-react'
+import Navbar from '../components/Navbar'
+import Card from '../components/Card'
+import Button from '../components/Button'
+import { useTranslation } from '../hooks/useTranslation'
+
+const Section = ({ eyebrow, title, subtitle, children }) => {
+  return (
+    <section className="py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          {eyebrow ? (
+            <p className="text-sm font-semibold tracking-wide text-primary uppercase mb-2">{eyebrow}</p>
+          ) : null}
+          <h2 className="text-3xl sm:text-4xl font-cairo font-bold text-text-dark mb-3">{title}</h2>
+          {subtitle ? <p className="text-text-gray leading-relaxed">{subtitle}</p> : null}
+        </div>
+        <div className="mt-8">{children}</div>
+      </div>
+    </section>
+  )
+}
+
+const PillarCard = ({ icon: Icon, title, description, bullets }) => {
+  return (
+    <Card>
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <Icon className="w-6 h-6 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-xl font-cairo font-bold text-text-dark">{title}</h3>
+          <p className="text-text-gray mt-2 leading-relaxed">{description}</p>
+          {bullets?.length ? (
+            <ul className="mt-4 space-y-2">
+              {bullets.map((b, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-text-gray">
+                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      </div>
+    </Card>
+  )
+}
+
+const StatCard = ({ label, value, note }) => {
+  return (
+    <Card>
+      <div className="space-y-2">
+        <p className="text-sm font-semibold text-text-gray">{label}</p>
+        <p className="text-3xl font-cairo font-bold text-text-dark">{value}</p>
+        {note ? <p className="text-sm text-text-light leading-relaxed">{note}</p> : null}
+      </div>
+    </Card>
+  )
+}
+
+const AboutPage = () => {
+  const { t } = useTranslation()
+
+  return (
+    <div className="min-h-screen bg-secondary/30">
+      <Navbar />
+
+      <div className="pt-24">
+        <section className="py-14">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <p className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                  <ShieldCheck className="w-4 h-4" />
+                  {t('about.badge')}
+                </p>
+                <h1 className="mt-5 text-4xl sm:text-5xl font-cairo font-bold text-text-dark leading-tight">
+                  {t('about.title')}
+                </h1>
+                <p className="mt-4 text-text-gray leading-relaxed">
+                  {t('about.subtitle')}
+                </p>
+
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Card>
+                    <div className="flex items-start gap-3">
+                      <Shield className="w-5 h-5 text-primary mt-1" />
+                      <div>
+                        <p className="font-semibold text-text-dark">{t('about.highlight1.title')}</p>
+                        <p className="text-sm text-text-gray mt-1 leading-relaxed">
+                          {t('about.highlight1.desc')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                  <Card>
+                    <div className="flex items-start gap-3">
+                      <FileText className="w-5 h-5 text-primary mt-1" />
+                      <div>
+                        <p className="font-semibold text-text-dark">{t('about.highlight2.title')}</p>
+                        <p className="text-sm text-text-gray mt-1 leading-relaxed">
+                          {t('about.highlight2.desc')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                  <Link to="/marketplace">
+                    <Button variant="primary" className="w-full sm:w-auto">
+                      {t('about.ctaPrimary')}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                  <Link to="/create-rfq">
+                    <Button variant="outline" className="w-full sm:w-auto">
+                      {t('about.ctaSecondary')}
+                    </Button>
+                  </Link>
+                </div>
+
+                <p className="mt-4 text-xs text-text-light leading-relaxed">
+                  {t('about.disclaimer')}
+                </p>
+              </motion.div>
+
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+                <Card>
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                        <Search className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <p className="text-lg font-cairo font-bold text-text-dark">{t('about.trustPanel.title')}</p>
+                        <p className="text-text-gray leading-relaxed mt-1">
+                          {t('about.trustPanel.desc')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-secondary/40">
+                        <p className="text-sm font-semibold text-text-dark">{t('about.trustPanel.item1.title')}</p>
+                        <p className="text-sm text-text-gray mt-1">{t('about.trustPanel.item1.desc')}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-secondary/40">
+                        <p className="text-sm font-semibold text-text-dark">{t('about.trustPanel.item2.title')}</p>
+                        <p className="text-sm text-text-gray mt-1">{t('about.trustPanel.item2.desc')}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-secondary/40">
+                        <p className="text-sm font-semibold text-text-dark">{t('about.trustPanel.item3.title')}</p>
+                        <p className="text-sm text-text-gray mt-1">{t('about.trustPanel.item3.desc')}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-secondary/40">
+                        <p className="text-sm font-semibold text-text-dark">{t('about.trustPanel.item4.title')}</p>
+                        <p className="text-sm text-text-gray mt-1">{t('about.trustPanel.item4.desc')}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        <Section
+          eyebrow={t('about.market.eyebrow')}
+          title={t('about.market.title')}
+          subtitle={t('about.market.subtitle')}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <p className="font-semibold text-text-dark">{t('about.market.pain1.title')}</p>
+              <p className="text-sm text-text-gray mt-2 leading-relaxed">
+                {t('about.market.pain1.desc')}
+              </p>
+            </Card>
+            <Card>
+              <p className="font-semibold text-text-dark">{t('about.market.pain2.title')}</p>
+              <p className="text-sm text-text-gray mt-2 leading-relaxed">
+                {t('about.market.pain2.desc')}
+              </p>
+            </Card>
+            <Card>
+              <p className="font-semibold text-text-dark">{t('about.market.pain3.title')}</p>
+              <p className="text-sm text-text-gray mt-2 leading-relaxed">
+                {t('about.market.pain3.desc')}
+              </p>
+            </Card>
+            <Card>
+              <p className="font-semibold text-text-dark">{t('about.market.pain4.title')}</p>
+              <p className="text-sm text-text-gray mt-2 leading-relaxed">
+                {t('about.market.pain4.desc')}
+              </p>
+            </Card>
+          </div>
+        </Section>
+
+        <Section
+          eyebrow={t('about.pillars.eyebrow')}
+          title={t('about.pillars.title')}
+          subtitle={t('about.pillars.subtitle')}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <PillarCard
+              icon={Building2}
+              title={t('about.pillars.verified.title')}
+              description={t('about.pillars.verified.desc')}
+              bullets={[
+                t('about.pillars.verified.b1'),
+                t('about.pillars.verified.b2'),
+                t('about.pillars.verified.b3'),
+              ]}
+            />
+            <PillarCard
+              icon={Gavel}
+              title={t('about.pillars.rfq.title')}
+              description={t('about.pillars.rfq.desc')}
+              bullets={[
+                t('about.pillars.rfq.b1'),
+                t('about.pillars.rfq.b2'),
+                t('about.pillars.rfq.b3'),
+              ]}
+            />
+            <PillarCard
+              icon={Shield}
+              title={t('about.pillars.escrow.title')}
+              description={t('about.pillars.escrow.desc')}
+              bullets={[
+                t('about.pillars.escrow.b1'),
+                t('about.pillars.escrow.b2'),
+                t('about.pillars.escrow.b3'),
+              ]}
+            />
+            <PillarCard
+              icon={Truck}
+              title={t('about.pillars.shipment.title')}
+              description={t('about.pillars.shipment.desc')}
+              bullets={[
+                t('about.pillars.shipment.b1'),
+                t('about.pillars.shipment.b2'),
+                t('about.pillars.shipment.b3'),
+              ]}
+            />
+          </div>
+        </Section>
+
+        <Section
+          eyebrow={t('about.framework.eyebrow')}
+          title={t('about.framework.title')}
+          subtitle={t('about.framework.subtitle')}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card>
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-primary mt-1" />
+                <div>
+                  <p className="font-semibold text-text-dark">{t('about.framework.item1.title')}</p>
+                  <p className="text-sm text-text-gray mt-1 leading-relaxed">{t('about.framework.item1.desc')}</p>
+                </div>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex items-start gap-3">
+                <FileText className="w-5 h-5 text-primary mt-1" />
+                <div>
+                  <p className="font-semibold text-text-dark">{t('about.framework.item2.title')}</p>
+                  <p className="text-sm text-text-gray mt-1 leading-relaxed">{t('about.framework.item2.desc')}</p>
+                </div>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-primary mt-1" />
+                <div>
+                  <p className="font-semibold text-text-dark">{t('about.framework.item3.title')}</p>
+                  <p className="text-sm text-text-gray mt-1 leading-relaxed">{t('about.framework.item3.desc')}</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </Section>
+
+        <Section
+          eyebrow={t('about.users.eyebrow')}
+          title={t('about.users.title')}
+          subtitle={t('about.users.subtitle')}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card>
+              <div className="flex items-start gap-4">
+                <Factory className="w-6 h-6 text-primary mt-1" />
+                <div>
+                  <h3 className="text-xl font-cairo font-bold text-text-dark">{t('about.users.m.title')}</h3>
+                  <p className="text-text-gray mt-2 leading-relaxed">
+                    {t('about.users.m.desc')}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="text-text-gray flex items-start gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
+                      {t('about.users.m.b1')}
+                    </li>
+                    <li className="text-text-gray flex items-start gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
+                      {t('about.users.m.b2')}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+
+            <Card>
+              <div className="flex items-start gap-4">
+                <Building2 className="w-6 h-6 text-primary mt-1" />
+                <div>
+                  <h3 className="text-xl font-cairo font-bold text-text-dark">{t('about.users.s.title')}</h3>
+                  <p className="text-text-gray mt-2 leading-relaxed">
+                    {t('about.users.s.desc')}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    <li className="text-text-gray flex items-start gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
+                      {t('about.users.s.b1')}
+                    </li>
+                    <li className="text-text-gray flex items-start gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-0.5" />
+                      {t('about.users.s.b2')}
+                    </li>
+                  </ul>
