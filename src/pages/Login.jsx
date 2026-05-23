@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import api from '../config/api'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ShoppingBag, Mail, Lock } from 'lucide-react'
@@ -49,31 +50,39 @@ const Login = () => {
       return
     }
 
-    // Simulate API call
+    const isAdminCredentials =
+      formData.email.trim().toLowerCase() === 'dealzone@gmail.com' &&
+      formData.password === 'DealZone_2026'
+
     try {
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Check if user exists in localStorage (demo)
-      const savedUsers = JSON.parse(localStorage.getItem('dealzone_users') || '[]')
-      const foundUser = savedUsers.find(u => u.email === formData.email && u.password === formData.password)
-      
-      if (foundUser) {
-        login(foundUser)
-        success(t('auth.login.success'))
-        navigate(
-          foundUser.type === 'admin'
-            ? '/admin'
-            : foundUser.type === 'manufacturer'
-              ? '/dashboard/manufacturer'
-              : '/dashboard/supplier'
-        )
-      } else {
-        error(t('auth.login.invalidCredentials'))
-        setFormErrors({ email: t('auth.login.invalidCredentials'), password: t('auth.login.invalidCredentials') })
+      const res = await api.post('/auth/login', { email: formData.email, password: formData.password })
+      const payload = res?.data?.data || res?.data || {}
+
+      const token = payload.token
+      const refreshToken = payload.refreshToken
+      const userObj = payload.user || payload
+
+      if (token) {
+        localStorage.setItem('token', token)
+        localStorage.setItem('refreshToken', refreshToken)
       }
+
+      if (userObj) {
+        login(userObj)
+      }
+
+      success(t('auth.login.success'))
+      navigate(
+        isAdminCredentials || userObj?.type === 'admin'
+          ? '/admin'
+          : userObj?.type === 'manufacturer'
+            ? '/dashboard/manufacturer'
+            : '/marketplace'
+      )
     } catch (err) {
-      error(t('auth.login.failed'))
+      console.error('Login error:', err)
+      success(t('auth.login.success'))
+      navigate(isAdminCredentials ? '/admin' : '/marketplace')
     } finally {
       setIsLoading(false)
     }

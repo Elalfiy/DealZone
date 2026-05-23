@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
-import { seedMockData, getPublicProductImage, getPublicProductImageByTitle } from '../utils/mockData'
+import { getPublicProductImage, getPublicProductImageByTitle } from '../utils/mockData'
 
 const AppContext = createContext()
 
@@ -230,21 +230,9 @@ export const AppProvider = ({ children }) => {
         console.error('Failed to parse saved user', e)
       }
     }
-    
-    // Load mock products and requests if they exist
+
+    // Load persisted app data (if present)
     try {
-      const hasAnySeededData =
-        !!localStorage.getItem('dealzone_products') ||
-        !!localStorage.getItem('dealzone_requests') ||
-        !!localStorage.getItem('dealzone_offers') ||
-        !!localStorage.getItem('dealzone_deals') ||
-        !!localStorage.getItem('dealzone_tenders') ||
-        !!localStorage.getItem('dealzone_users')
-
-      if (!hasAnySeededData) {
-        seedMockData()
-      }
-
       const savedProducts = localStorage.getItem('dealzone_products')
       if (savedProducts) {
         const parsedProducts = JSON.parse(savedProducts)
@@ -269,7 +257,7 @@ export const AppProvider = ({ children }) => {
         setTenders(JSON.parse(savedTenders))
       }
     } catch (e) {
-      console.error('Failed to load mock data', e)
+      console.error('Failed to load persisted data', e)
     }
   }, [])
 
