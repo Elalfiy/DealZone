@@ -39,8 +39,14 @@ namespace DealZone.API.Middlewares
             };
 
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            // Always 200 so CORS headers are not stripped on business/validation errors
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+            return context.Response.WriteAsync(JsonSerializer.Serialize(new
+            {
+                success = false,
+                message = exception.Message,
+                errors = Array.Empty<string>()
+            }));
         }
     }
 }

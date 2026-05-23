@@ -17,27 +17,27 @@ namespace DealZone.API.Controllers
             _tenderService = tenderService;
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost]
         public async Task<IActionResult> CreateTender([FromBody] TenderCreateDto request)
         {
             var buyerId = User.GetUserId();
             var tender = await _tenderService.CreateTenderAsync(buyerId, request);
-            return Ok(new ApiResponse<TenderDto> { Data = tender });
+            return Ok(new DealZone.API.Helpers.ApiResponse<TenderDto> { Data = tender });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTenders([FromQuery] int? categoryId, [FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var result = await _tenderService.GetTendersAsync(categoryId, status, page, pageSize);
-            return Ok(new ApiResponse<PaginatedResult<TenderDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<PaginatedResult<TenderDto>> { Data = result });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTender(int id)
         {
             var tender = await _tenderService.GetTenderByIdAsync(id);
-            return Ok(new ApiResponse<TenderDto> { Data = tender });
+            return Ok(new DealZone.API.Helpers.ApiResponse<TenderDto> { Data = tender });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -46,23 +46,23 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             var bid = await _tenderService.SubmitTenderBidAsync(supplierId, id, request);
-            return Ok(new ApiResponse<TenderBidDto> { Data = bid });
+            return Ok(new DealZone.API.Helpers.ApiResponse<TenderBidDto> { Data = bid });
         }
 
         [HttpGet("{id}/bids")]
         public async Task<IActionResult> GetTenderBids(int id)
         {
             var bids = await _tenderService.GetTenderBidsAsync(id);
-            return Ok(new ApiResponse<IEnumerable<TenderBidDto>> { Data = bids });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<TenderBidDto>> { Data = bids });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPut("{id}/bids/{bidId}/award")]
         public async Task<IActionResult> AwardTenderBid(int id, int bidId)
         {
             var buyerId = User.GetUserId();
             await _tenderService.AwardTenderBidAsync(buyerId, id, bidId);
-            return Ok(new ApiResponse<object> { Data = null, Message = "Tender bid awarded and order created." });
+            return Ok(new DealZone.API.Helpers.ApiResponse<object> { Data = null, Message = "Tender bid awarded and order created." });
         }
     }
 }

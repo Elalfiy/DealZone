@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DealZone.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4b64f34d6cf7d79f8b31fcb3654f9ae9b5d3538")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+edc5d74f8ada4957290980f270ac13854ddf352b")]
 [assembly: System.Reflection.AssemblyProductAttribute("DealZone.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DealZone.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

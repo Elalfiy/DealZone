@@ -24,7 +24,7 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var summary = await _analyticsService.GetSummaryAsync(userId, role);
-            return Ok(new ApiResponse<AnalyticsSummaryDto> { Data = summary });
+            return Ok(new DealZone.API.Helpers.ApiResponse<AnalyticsSummaryDto> { Data = summary });
         }
 
         [Authorize]
@@ -34,7 +34,7 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var chart = await _analyticsService.GetOrdersChartAsync(userId, role);
-            return Ok(new ApiResponse<IEnumerable<ChartPointDto>> { Data = chart });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<ChartPointDto>> { Data = chart });
         }
 
         [Authorize]
@@ -44,16 +44,16 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var chart = await _analyticsService.GetRevenueChartAsync(userId, role);
-            return Ok(new ApiResponse<IEnumerable<ChartPointDto>> { Data = chart });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<ChartPointDto>> { Data = chart });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpGet("top-suppliers")]
         public async Task<IActionResult> GetTopSuppliers()
         {
             var buyerId = User.GetUserId();
             var result = await _analyticsService.GetTopSuppliersAsync(buyerId);
-            return Ok(new ApiResponse<IEnumerable<SupplierSummaryDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<SupplierSummaryDto>> { Data = result });
         }
 
         [Authorize]
@@ -61,7 +61,7 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> GetPriceTrends([FromQuery] int? categoryId)
         {
             var result = await _analyticsService.GetPriceTrendsAsync(categoryId);
-            return Ok(new ApiResponse<IEnumerable<PriceTrendDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<PriceTrendDto>> { Data = result });
         }
     }
 }

@@ -22,14 +22,14 @@ namespace DealZone.API.Controllers
             [FromQuery] decimal? maxPrice, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var results = await _productService.GetProductsAsync(categoryId, search, minPrice, maxPrice, page, pageSize);
-            return Ok(new ApiResponse<PaginatedResult<ProductDto>> { Data = results });
+            return Ok(new DealZone.API.Helpers.ApiResponse<PaginatedResult<ProductDto>> { Data = results });
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            return Ok(new ApiResponse<ProductDto> { Data = product });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ProductDto> { Data = product });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -38,7 +38,7 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             var product = await _productService.CreateProductAsync(supplierId, request);
-            return Ok(new ApiResponse<ProductDto> { Data = product });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ProductDto> { Data = product });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -47,7 +47,7 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             var product = await _productService.UpdateProductAsync(supplierId, id, request);
-            return Ok(new ApiResponse<ProductDto> { Data = product });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ProductDto> { Data = product });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -56,7 +56,7 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             await _productService.DeleteProductAsync(supplierId, id);
-            return Ok(new ApiResponse<object> { Data = null, Message = "Product deleted." });
+            return Ok(new DealZone.API.Helpers.ApiResponse<object> { Data = null, Message = "Product deleted." });
         }
     }
 }

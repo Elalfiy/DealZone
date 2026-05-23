@@ -6,6 +6,7 @@ namespace DealZone.API.Services.Interfaces
     public interface IAuthService
     {
         Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request);
+        Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request, IFormFile? kycDocument);
         Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
         Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
         Task LogoutAsync(int userId, string refreshToken);
@@ -15,6 +16,7 @@ namespace DealZone.API.Services.Interfaces
     {
         Task<UserProfileDto> GetProfileAsync(int userId);
         Task<UserProfileDto> UpdateProfileAsync(int userId, UserProfileUpdateDto request);
+        Task<IEnumerable<CompanyDto>> GetApprovedCompaniesAsync();
         Task<CompanyDto> GetCompanyAsync(int companyId);
         Task<CompanyDto> UpdateCompanyAsync(int companyId, CompanyUpdateDto request);
         Task<KycStatusDto> UploadKycDocumentAsync(int userId, KycUploadDto request);

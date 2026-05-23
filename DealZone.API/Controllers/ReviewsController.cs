@@ -17,20 +17,20 @@ namespace DealZone.API.Controllers
             _reviewService = reviewService;
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] ReviewCreateDto request)
         {
             var buyerId = User.GetUserId();
             var review = await _reviewService.CreateReviewAsync(buyerId, request);
-            return Ok(new ApiResponse<ReviewDto> { Data = review });
+            return Ok(new DealZone.API.Helpers.ApiResponse<ReviewDto> { Data = review });
         }
 
         [HttpGet("supplier/{supplierId}")]
         public async Task<IActionResult> GetSupplierReviews(int supplierId)
         {
             var result = await _reviewService.GetReviewsBySupplierAsync(supplierId);
-            return Ok(new ApiResponse<IEnumerable<ReviewDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<ReviewDto>> { Data = result });
         }
     }
 }

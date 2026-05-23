@@ -24,25 +24,25 @@ namespace DealZone.API.Controllers
             var userId = User.GetUserId();
             var role = User.GetRole();
             var escrow = await _escrowService.GetEscrowAsync(orderId, userId, role);
-            return Ok(new ApiResponse<EscrowDto> { Data = escrow });
+            return Ok(new DealZone.API.Helpers.ApiResponse<EscrowDto> { Data = escrow });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost("{orderId}/release")]
         public async Task<IActionResult> ReleaseEscrow(int orderId)
         {
             var userId = User.GetUserId();
             var escrow = await _escrowService.ReleaseEscrowAsync(orderId, userId);
-            return Ok(new ApiResponse<EscrowDto> { Data = escrow });
+            return Ok(new DealZone.API.Helpers.ApiResponse<EscrowDto> { Data = escrow });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost("{orderId}/dispute")]
         public async Task<IActionResult> DisputeEscrow(int orderId, [FromBody] EscrowDisputeDto request)
         {
             var userId = User.GetUserId();
             var escrow = await _escrowService.DisputeEscrowAsync(orderId, userId, request);
-            return Ok(new ApiResponse<EscrowDto> { Data = escrow });
+            return Ok(new DealZone.API.Helpers.ApiResponse<EscrowDto> { Data = escrow });
         }
     }
 }

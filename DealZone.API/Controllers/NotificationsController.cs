@@ -23,7 +23,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             var result = await _notificationService.GetNotificationsAsync(userId);
-            return Ok(new ApiResponse<IEnumerable<NotificationDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<NotificationDto>> { Data = result });
         }
 
         [Authorize]
@@ -32,7 +32,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             await _notificationService.MarkReadAsync(userId, id);
-            return Ok(new ApiResponse<object> { Data = null, Message = "Notification marked as read." });
+            return Ok(new DealZone.API.Helpers.ApiResponse<object> { Data = null, Message = "Notification marked as read." });
         }
 
         [Authorize]
@@ -41,7 +41,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             await _notificationService.MarkAllReadAsync(userId);
-            return Ok(new ApiResponse<object> { Data = null, Message = "All notifications marked as read." });
+            return Ok(new DealZone.API.Helpers.ApiResponse<object> { Data = null, Message = "All notifications marked as read." });
         }
     }
 }

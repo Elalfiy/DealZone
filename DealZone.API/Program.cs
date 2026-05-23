@@ -13,10 +13,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(options =>
-{
-    options.SuppressModelStateInvalidFilter = true;
-});
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -49,19 +46,28 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Buyer", policy => policy.RequireRole("Buyer"));
+    options.AddPolicy("Buyer", policy => policy.RequireRole("Buyer", "Manufacturer"));
     options.AddPolicy("Supplier", policy => policy.RequireRole("Supplier"));
+    options.AddPolicy("Manufacturer", policy => policy.RequireRole("Manufacturer", "Buyer"));
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 });
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5174", "http://localhost:5175", "http://localhost:5178", "http://localhost:5179", "http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy
+            .SetIsOriginAllowed(origin =>
+            {
+                if (string.IsNullOrWhiteSpace(origin))
+                    return false;
+                if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                    return false;
+                return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+            })
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -72,6 +78,7 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartHeadersLengthLimit = 16384;
 });
 
+builder.Services.AddScoped<KycFileStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -128,22 +135,21 @@ if (!Directory.Exists(uploadsPath))
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await DbSeeder.SeedAsync(context);
+    var resetOnStartup = app.Configuration.GetValue("Database:ResetOnStartup", app.Environment.IsDevelopment());
+    await DbSeeder.ResetAndSeedAsync(context, resetOnStartup);
 }
+
+app.UseCors("AllowFrontend");
+app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseCors("AllowReactApp");
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 

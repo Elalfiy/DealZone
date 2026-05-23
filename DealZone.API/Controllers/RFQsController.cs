@@ -17,22 +17,22 @@ namespace DealZone.API.Controllers
             _rfqService = rfqService;
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPost]
         public async Task<IActionResult> CreateRFQ([FromBody] RFQCreateDto request)
         {
             var buyerId = User.GetUserId();
             var rfq = await _rfqService.CreateRFQAsync(buyerId, request);
-            return Ok(new ApiResponse<RFQDto> { Data = rfq });
+            return Ok(new DealZone.API.Helpers.ApiResponse<RFQDto> { Data = rfq });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpGet]
         public async Task<IActionResult> GetMyRFQs([FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var buyerId = User.GetUserId();
             var result = await _rfqService.GetMyRFQsAsync(buyerId, status, page, pageSize);
-            return Ok(new ApiResponse<PaginatedResult<RFQDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<PaginatedResult<RFQDto>> { Data = result });
         }
 
         [Authorize]
@@ -40,7 +40,7 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> GetRFQ(int id)
         {
             var rfq = await _rfqService.GetRFQByIdAsync(id);
-            return Ok(new ApiResponse<RFQDto> { Data = rfq });
+            return Ok(new DealZone.API.Helpers.ApiResponse<RFQDto> { Data = rfq });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -49,7 +49,7 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             var result = await _rfqService.GetIncomingRFQsAsync(supplierId, page, pageSize);
-            return Ok(new ApiResponse<PaginatedResult<RFQDto>> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<PaginatedResult<RFQDto>> { Data = result });
         }
 
         [Authorize(Roles = "Supplier")]
@@ -58,7 +58,7 @@ namespace DealZone.API.Controllers
         {
             var supplierId = User.GetUserId();
             var bid = await _rfqService.SubmitBidAsync(supplierId, id, request);
-            return Ok(new ApiResponse<RFQBidDto> { Data = bid });
+            return Ok(new DealZone.API.Helpers.ApiResponse<RFQBidDto> { Data = bid });
         }
 
         [Authorize]
@@ -66,16 +66,16 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> GetBids(int id)
         {
             var bids = await _rfqService.GetBidsAsync(id);
-            return Ok(new ApiResponse<IEnumerable<RFQBidDto>> { Data = bids });
+            return Ok(new DealZone.API.Helpers.ApiResponse<IEnumerable<RFQBidDto>> { Data = bids });
         }
 
-        [Authorize(Roles = "Buyer")]
+        [Authorize(Roles = "Buyer,Manufacturer")]
         [HttpPut("{id}/bids/{bidId}/award")]
         public async Task<IActionResult> AwardBid(int id, int bidId)
         {
             var buyerId = User.GetUserId();
             await _rfqService.AwardBidAsync(buyerId, id, bidId);
-            return Ok(new ApiResponse<object> { Data = null, Message = "Bid awarded and order created." });
+            return Ok(new DealZone.API.Helpers.ApiResponse<object> { Data = null, Message = "Bid awarded and order created." });
         }
     }
 }

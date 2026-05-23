@@ -1,6 +1,7 @@
 using DealZone.API.DTOs;
 using DealZone.API.Helpers;
 using DealZone.API.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +18,21 @@ namespace DealZone.API.Controllers
             _userService = userService;
         }
 
+        /// <summary>Public list of KYC-approved companies (suppliers &amp; manufacturers).</summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetCompanies()
+        {
+            var companies = await _userService.GetApprovedCompaniesAsync();
+            return Ok(new { success = true, data = companies });
+        }
+
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCompany(int id)
         {
             var company = await _userService.GetCompanyAsync(id);
-            return Ok(new ApiResponse<CompanyDto> { Data = company });
+            return Ok(new DealZone.API.Helpers.ApiResponse<CompanyDto> { Data = company });
         }
 
         [Authorize]
@@ -30,7 +40,7 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> UpdateCompany(int id, [FromBody] CompanyUpdateDto request)
         {
             var company = await _userService.UpdateCompanyAsync(id, request);
-            return Ok(new ApiResponse<CompanyDto> { Data = company });
+            return Ok(new DealZone.API.Helpers.ApiResponse<CompanyDto> { Data = company });
         }
 
         [Authorize]
@@ -38,21 +48,29 @@ namespace DealZone.API.Controllers
         public async Task<IActionResult> UploadKyc([FromForm] IFormFile file, [FromForm] string docType)
         {
             if (file == null || file.Length == 0)
-                return BadRequest(new ApiResponse<object> { Message = "No file provided." });
+                return Ok(new { success = false, message = "لم يتم إرفاق ملف." });
 
-            // Validate file size (10MB max)
             if (file.Length > 10 * 1024 * 1024)
-                return BadRequest(new ApiResponse<object> { Message = "File size must be less than 10MB." });
+                return Ok(new { success = false, message = "حجم الملف يجب أن يكون أقل من 10 ميجابايت." });
 
-            // Validate file type
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx" };
             var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (!allowedExtensions.Contains(fileExtension))
-                return BadRequest(new ApiResponse<object> { Message = "Only JPG, PNG, and PDF files are allowed." });
+                return Ok(new { success = false, message = "الملفات المسموحة: JPG, PNG, PDF, DOC." });
 
             var userId = User.GetUserId();
-            var result = await _userService.UploadKycFileAsync(userId, file, docType);
-            return Ok(new ApiResponse<KycStatusDto> { Data = result });
+            if (userId == 0)
+                return Ok(new { success = false, message = "يجب تسجيل الدخول أولاً." });
+
+            try
+            {
+                var result = await _userService.UploadKycFileAsync(userId, file, docType);
+                return Ok(new { success = true, message = result.Message, data = result });
+            }
+            catch (ApplicationException ex)
+            {
+                return Ok(new { success = false, message = ex.Message });
+            }
         }
 
         [Authorize]
@@ -61,7 +79,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             var result = await _userService.GetKycStatusAsync(userId);
-            return Ok(new ApiResponse<KycStatusDto> { Data = result });
+            return Ok(new DealZone.API.Helpers.ApiResponse<KycStatusDto> { Data = result });
         }
     }
 }

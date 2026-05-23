@@ -23,7 +23,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             var profile = await _userService.GetProfileAsync(userId);
-            return Ok(new ApiResponse<UserProfileDto> { Data = profile });
+            return Ok(new DealZone.API.Helpers.ApiResponse<UserProfileDto> { Data = profile });
         }
 
         [Authorize]
@@ -32,7 +32,7 @@ namespace DealZone.API.Controllers
         {
             var userId = User.GetUserId();
             var profile = await _userService.UpdateProfileAsync(userId, request);
-            return Ok(new ApiResponse<UserProfileDto> { Data = profile });
+            return Ok(new DealZone.API.Helpers.ApiResponse<UserProfileDto> { Data = profile });
         }
     }
 }
